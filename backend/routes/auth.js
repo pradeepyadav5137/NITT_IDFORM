@@ -1,0 +1,23 @@
+import express from 'express';
+import {
+  adminLogin,
+  adminForgotPassword,
+  adminResetPassword,
+  verifyEmailOtp,
+  sendOtp,
+} from '../controllers/authController.js';
+
+const router = express.Router();
+
+// Admin Login (no registration)
+router.post('/admin-login', adminLogin);
+router.post('/admin-forgot-password', adminForgotPassword);
+router.post('/admin-reset-password', adminResetPassword);
+
+// Send OTP (student: rollNo → rollno@nitt.edu; faculty/staff: email @nitt.edu)
+router.post('/send-otp', sendOtp);
+
+// Verify OTP (email, otp, userType) – returns JWT with locked email/rollNo
+router.post('/verify-email', verifyEmailOtp);
+
+export default router;
