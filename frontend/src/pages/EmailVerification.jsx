@@ -1,7 +1,10 @@
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { authAPI } from '../services/api'
+import StepIndicator from '../components/StepIndicator'
 import './StudentFlow.css'
+
+const STUDENT_STEPS = ['Verify Email', 'Student Form', 'Upload Documents', 'Preview & Submit'];
 
 export default function EmailVerification() {
   const { userType } = useParams()
@@ -41,6 +44,7 @@ export default function EmailVerification() {
       setStep(2)
       startResendTimer()
     } catch (err) {
+      console.error("Send OTP Error:", err); // Added for easier debugging
       setError(err.message || 'Failed to send OTP. Please try again.')
     }
     setLoading(false)
@@ -115,6 +119,14 @@ export default function EmailVerification() {
 
   return (
     <div className="form-container">
+      {isStudent && (
+        <StepIndicator
+          current={1}
+          total={STUDENT_STEPS.length}
+          labels={STUDENT_STEPS}
+        />
+      )}
+
       <div className="form-card">
         {/* Header */}
         <h2>Email Verification</h2>

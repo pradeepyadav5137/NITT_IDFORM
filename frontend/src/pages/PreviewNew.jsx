@@ -3,14 +3,27 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { jsPDF } from 'jspdf'
 import { applicationAPI } from '../services/api'
 import { generateStudentPDF } from '../services/pdfGenerator'
+import StepIndicator from '../components/StepIndicator'
+
+const STUDENT_STEPS = ['Verify Email', 'Student Form', 'Upload Documents', 'Preview & Submit'];
 
 const PreviewNew = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const [formData, setFormData] = useState(null)
   const [loading, setLoading] = useState(false)
+  const userType = localStorage.getItem('userType')
+  const isStudent = userType === 'student'
   
   useEffect(() => {
+    // Check if we have uploaded files in local storage but missing in state (reload scenario)
+    const uploadedFiles = localStorage.getItem('uploadedFiles')
+    if (uploadedFiles && (!location.state || !location.state.files)) {
+      alert("Session state lost. Please re-upload documents to proceed.")
+      navigate('/upload-documents')
+      return
+    }
+
     const storedFormData = localStorage.getItem('studentFormData') || localStorage.getItem('formData')
     
     if (!storedFormData) {
@@ -24,7 +37,7 @@ const PreviewNew = () => {
     } catch (err) {
       console.error('Error loading form data:', err)
     }
-  }, [navigate])
+  }, [navigate, location.state])
   
   const formatDate = (dateString) => {
     if (!dateString) return ''
@@ -166,6 +179,16 @@ const PreviewNew = () => {
       padding: '40px 20px',
       fontFamily: 'Arial, sans-serif'
     }}>
+      {isStudent && (
+        <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+             <StepIndicator
+                current={4}
+                total={STUDENT_STEPS.length}
+                labels={STUDENT_STEPS}
+             />
+        </div>
+      )}
+
       <div style={{
         background: 'white',
         maxWidth: '1000px',
