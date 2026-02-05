@@ -242,25 +242,12 @@ const API_BASE_URL = 'http://localhost:5000/api'
 // Create axios instance
 const api = axios.create({
   baseURL: API_BASE_URL,
+  withCredentials: true,
   headers: {
     'Content-Type': 'application/json'
   },
   timeout: 50000
 })
-
-// Add token to requests if available
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('adminToken') || localStorage.getItem('token')
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`
-    }
-    return config
-  },
-  (error) => {
-    return Promise.reject(error)
-  }
-)
 
 // Handle response errors globally
 api.interceptors.response.use(
@@ -268,6 +255,13 @@ api.interceptors.response.use(
   (error) => {
     if (error.response) {
       console.error('API Error:', error.response.status, error.response.data)
+      if (error.response.status === 401) {
+        // Redirect to home/login on 401
+        if (window.location.pathname !== '/' && window.location.pathname !== '/admin-login') {
+             // Optional: Handle redirect or state cleanup
+             window.location.href = '/';
+        }
+      }
     } else if (error.request) {
       console.error('Network Error: No response from server')
     } else {
@@ -279,6 +273,15 @@ api.interceptors.response.use(
 
 // ===== AUTH API =====
 export const authAPI = {
+  // Logout
+  logout: async () => {
+    try {
+      await api.post('/auth/logout')
+    } catch (error) {
+      console.error('Logout failed', error)
+    }
+  },
+
   // Send OTP
   sendOTP: async (data) => {
     try {

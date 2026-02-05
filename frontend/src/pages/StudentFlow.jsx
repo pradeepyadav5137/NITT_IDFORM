@@ -181,6 +181,7 @@ export default function StudentFlow() {
     console.log("Initializing Student Flow: Wiping previous session data...");
     localStorage.clear();
     sessionStorage.clear();
+    authAPI.logout(); // Clear cookie
   }, []);
 
   const handleSendOtp = async (e) => {
@@ -225,8 +226,8 @@ export default function StudentFlow() {
       
       console.log("Verification Successful. Saving new session data for:", rollNo);
       
-      // 1. Save Token
-      localStorage.setItem('token', res.token);
+      // 1. Save Token (COOKIE IS SET BY BACKEND NOW)
+      // localStorage.setItem('token', res.token);
       localStorage.setItem('userType', 'student');
       
       // 2. Save Identity

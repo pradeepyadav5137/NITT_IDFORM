@@ -1203,7 +1203,7 @@
 
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { adminAPI } from '../services/api'
+import { adminAPI, authAPI } from '../services/api'
 import { generateStudentPDF, generateFacultyStaffPDF } from '../services/pdfGenerator'
 import './Admin.css'
 
@@ -1249,11 +1249,11 @@ export default function AdminDashboard() {
   const [currentAdmin, setCurrentAdmin] = useState(null)
 
   useEffect(() => {
-    const token = localStorage.getItem('adminToken')
-    if (!token) {
-      navigate('/admin-login')
-      return
-    }
+    // const token = localStorage.getItem('adminToken')
+    // if (!token) {
+    //   navigate('/admin-login')
+    //   return
+    // }
 
     fetchData()
   }, [navigate])
@@ -1317,8 +1317,9 @@ export default function AdminDashboard() {
     }
   }
 
-  const handleLogout = () => {
-    localStorage.removeItem('adminToken')
+  const handleLogout = async () => {
+    await authAPI.logout()
+    // localStorage.removeItem('adminToken')
     localStorage.removeItem('adminUser')
     navigate('/')
   }

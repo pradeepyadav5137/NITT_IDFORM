@@ -107,6 +107,13 @@ export const verifyEmailOtp = async (req, res) => {
 
     const token = jwt.sign(payload, process.env.JWT_SECRET);
 
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      maxAge: 2 * 60 * 60 * 1000 // 2 hours
+    });
+
     res.json({
       success: true,
       token,
@@ -144,6 +151,13 @@ export const adminLogin = async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: '24h' }
     );
+
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    });
 
     res.json({
       success: true,
@@ -213,4 +227,13 @@ export const adminResetPassword = async (req, res) => {
     console.error('Reset password error:', error);
     res.status(500).json({ message: 'Failed to update password' });
   }
+};
+
+export const logout = (req, res) => {
+  res.clearCookie('token', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
+  });
+  res.json({ success: true, message: 'Logged out successfully' });
 };
