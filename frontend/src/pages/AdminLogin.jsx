@@ -24,7 +24,7 @@ export default function AdminLogin() {
     try {
       // CHANGED: from authAPI.adminLogin to adminAPI.login
       const response = await adminAPI.login(username, password)
-      localStorage.setItem('adminToken', response.token)
+      // localStorage.setItem('adminToken', response.token)
       localStorage.setItem('adminUser', JSON.stringify(response.admin))
       navigate('/admin/dashboard')
     } catch (err) {

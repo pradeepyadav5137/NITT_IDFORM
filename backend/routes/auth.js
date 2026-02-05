@@ -5,6 +5,7 @@ import {
   adminResetPassword,
   verifyEmailOtp,
   sendOtp,
+  logout,
 } from '../controllers/authController.js';
 
 const router = express.Router();
@@ -19,5 +20,8 @@ router.post('/send-otp', sendOtp);
 
 // Verify OTP (email, otp, userType) – returns JWT with locked email/rollNo
 router.post('/verify-email', verifyEmailOtp);
+
+// Logout
+router.post('/logout', logout);
 
 export default router;

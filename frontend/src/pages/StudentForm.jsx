@@ -77,10 +77,10 @@ export default function StudentForm() {
   const [errors, setErrors] = useState({})
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    // const token = localStorage.getItem('token');
     const userType = localStorage.getItem('userType');
 
-    if (!token || !verifiedRollNo || userType !== 'student') {
+    if (!verifiedRollNo || userType !== 'student') {
       localStorage.clear();
       navigate('/apply/student');
     }

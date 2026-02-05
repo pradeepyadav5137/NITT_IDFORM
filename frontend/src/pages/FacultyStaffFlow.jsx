@@ -78,6 +78,7 @@ export default function FacultyStaffFlow() {
   useEffect(() => {
     localStorage.clear();
     sessionStorage.clear();
+    authAPI.logout();
     setFormData(INITIAL_FORM_STATE);
   }, []);
 
@@ -183,7 +184,7 @@ export default function FacultyStaffFlow() {
       const res = await authAPI.verifyEmail(finalEmail, finalOtp, finalRole);
       
       // Save session data
-      localStorage.setItem('token', res.token)
+      // localStorage.setItem('token', res.token)
       localStorage.setItem('email', res.email)
       localStorage.setItem('userType', finalRole)
       
