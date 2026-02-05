@@ -62,7 +62,7 @@ export const sendOtp = async (req, res) => {
       );
     } catch (mailError) {
       console.error('Nodemailer error:', mailError);
-      return res.status(400).json({ message: 'Email delivery failed: ' + (mailError.message || 'Unknown error') });
+      return res.status(400).json({ message: 'Email does not exist or delivery failed' });
     }
 
     res.json({

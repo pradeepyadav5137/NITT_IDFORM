@@ -142,18 +142,33 @@ export default function EmailVerification() {
 
         {/* Step 1: Enter Email/Roll Number */}
         {step === 1 && (
-          <form onSubmit={handleSendOTP}>
-            {isStudent ? (
-              <>
-                <div className="info-box">
+          <>
+            {/* Info Box - Now matches Faculty structure (outside form) */}
+            <div className="info-box">
+              {isStudent ? (
+                <>
                   <h4>Roll Number Verification</h4>
                   <ul>
                     <li>Enter your institute roll number</li>
                     <li>OTP will be sent to: <strong>{rollNo ? `${rollNo}@nitt.edu` : 'rollnumber@nitt.edu'}</strong></li>
                     <li>OTP is valid for 5 minutes</li>
                   </ul>
-                </div>
+                </>
+              ) : (
+                <>
+                  <h4>Email Verification Instructions:</h4>
+                  <ul>
+                    <li>Use your institute email address (@nitt.edu)</li>
+                    <li>A 6-digit OTP will be sent to your email</li>
+                    <li>OTP is valid for 5 minutes</li>
+                    <li style={{color: '#e53e3e', fontWeight: 'bold'}}>Do NOT use Student Roll No email</li>
+                  </ul>
+                </>
+              )}
+            </div>
 
+            <form onSubmit={handleSendOTP}>
+              {isStudent ? (
                 <div className="form-group">
                   <label htmlFor="rollNo">
                     Roll Number <span className="required">*</span>
@@ -171,18 +186,7 @@ export default function EmailVerification() {
                     <small>Email: {rollNo}@nitt.edu</small>
                   )}
                 </div>
-              </>
-            ) : (
-              <>
-                <div className="info-box">
-                  <h4>Email Verification</h4>
-                  <ul>
-                    <li>Use your institute email address (@nitt.edu)</li>
-                    <li>A 6-digit OTP will be sent to your email</li>
-                    <li>OTP is valid for 5 minutes</li>
-                  </ul>
-                </div>
-
+              ) : (
                 <div className="form-group">
                   <label htmlFor="email">
                     Institute Email <span className="required">*</span>
@@ -197,28 +201,28 @@ export default function EmailVerification() {
                     autoFocus
                   />
                 </div>
-              </>
-            )}
+              )}
 
-            <div className="button-group">
-              <button type="submit" disabled={loading} className="btn btn-primary">
-                {loading ? (
-                  <>
-                    <span className="loading-spinner"></span> Sending OTP...
-                  </>
-                ) : (
-                  'Send OTP'
-                )}
-              </button>
-              <button
-                type="button"
-                onClick={() => navigate('/')}
-                className="btn btn-secondary"
-              >
-                Back to Home
-              </button>
-            </div>
-          </form>
+              <div className="button-group">
+                <button type="submit" disabled={loading} className="btn btn-primary">
+                  {loading ? (
+                    <>
+                      <span className="loading-spinner"></span> Sending OTP...
+                    </>
+                  ) : (
+                    'Send OTP'
+                  )}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => navigate('/')}
+                  className="btn btn-secondary"
+                >
+                  Back to Home
+                </button>
+              </div>
+            </form>
+          </>
         )}
 
         {/* Step 2: Verify OTP */}
