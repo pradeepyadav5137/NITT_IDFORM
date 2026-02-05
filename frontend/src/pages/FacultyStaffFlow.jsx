@@ -56,8 +56,8 @@ export default function FacultyStaffFlow() {
   const [verifiedEmail, setVerifiedEmail] = useState('')
   
   // File State
-  const [files, setFiles] = useState({ photo: null, fir: null, payment: null })
-  const [filePreviews, setFilePreviews] = useState({ photo: null, fir: null, payment: null })
+  const [files, setFiles] = useState({ photo: null })
+  const [filePreviews, setFilePreviews] = useState({ photo: null })
   const [fileError, setFileError] = useState('')
 
   // --- TOAST STATE ---
@@ -251,13 +251,6 @@ export default function FacultyStaffFlow() {
       return;
     }
 
-    // Validate Payment
-    const isPaymentMandatory = ['Replacement', 'Correction', 'Update'].includes(formData.requestCategory);
-    if (isPaymentMandatory && !files.payment) {
-      showToast('Payment receipt is mandatory for this request category', 'error');
-      return;
-    }
-
     setStep(3);
   }
   
@@ -281,8 +274,6 @@ export default function FacultyStaffFlow() {
       })
       
       if (files.photo) formDataToSend.append('photo', files.photo)
-      if (files.fir) formDataToSend.append('fir', files.fir)
-      if (files.payment) formDataToSend.append('payment', files.payment)
       formDataToSend.append('submittedAt', new Date().toISOString())
       
       // Generate temp ID for PDF
@@ -579,8 +570,6 @@ export default function FacultyStaffFlow() {
 
   // STEP 2: UPLOAD DOCUMENTS
   if (step === 2) {
-    const isPaymentMandatory = ['Replacement', 'Correction', 'Update'].includes(formData.requestCategory);
-
     return (
       <div className="faculty-form-container">
         {toast && (
@@ -594,7 +583,7 @@ export default function FacultyStaffFlow() {
         <div className="faculty-form-card">
           <h2>Upload Required Documents</h2>
           <p className="form-description">
-            Please upload your photo and payment receipt (if applicable).
+            Please upload your photo.
           </p>
 
           <div className="info-box">
@@ -654,125 +643,6 @@ export default function FacultyStaffFlow() {
               </div>
             </div>
 
-            {/* FIR Section (OPTIONAL) */}
-            <h3>FIR / Lost Document Report (Optional)</h3>
-            <div className="form-grid full">
-              <div className="form-group">
-                <label htmlFor="fir">
-                  FIR Copy / Lost Report
-                  <span className="optional"> (Optional)</span>
-                </label>
-                <p style={{ fontSize: '13px', color: '#666', marginBottom: '10px' }}>
-                  Required only if ID was lost or stolen. Upload FIR copy filed at police station.
-                </p>
-                {!files.fir && (
-                  <input
-                    type="file"
-                    id="fir"
-                    name="fir"
-                    onChange={handleFileChange}
-                    accept=".pdf,image/*"
-                  />
-                )}
-                {files.fir && (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <div className="file-check" style={{ flex: 1 }}>
-                      ✓ {files.fir.name} ({formatFileSize(files.fir.size)})
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => removeFile('fir')}
-                      className="btn btn-secondary"
-                      style={{ padding: '8px 16px', fontSize: '13px' }}
-                    >
-                      Remove
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Payment Section */}
-            <h3>Payment</h3>
-            
-            {/* Payment Instructions */}
-            <div className="payment-instructions" style={{
-              backgroundColor: '#f0f9ff',
-              border: '1px solid #bae6fd',
-              borderRadius: '8px',
-              padding: '16px',
-              marginBottom: '20px',
-              fontfamily: 'Segoe UI',
-            }}>
-              <h4 style={{ color: '#1a365d', marginBottom: '10px' }}>Payment Instructions</h4>
-
-              {isPaymentMandatory ? (
-                <p style={{ marginBottom: '15px', fontSize: '14px', color: '#c53030', fontWeight: 'bold' }}>
-                  Payment is MANDATORY for Replacement / Correction / Update requests.
-                </p>
-              ) : (
-                 <p style={{ marginBottom: '15px', fontSize: '14px', color: '#2f855a' }}>
-                  Payment is optional for New requests.
-                </p>
-              )}
-
-              <p style={{ marginBottom: '15px', fontSize: '14px' }}>
-                <strong>Fee for Duplicate ID Card: ₹500/-</strong>
-              </p>
-              <ol style={{ marginLeft: '20px', fontSize: '13px' }}>
-                <li><strong>Click the button below to go to SBI Collect</strong></li>
-                <li>Select State: <strong>Tamil Nadu</strong></li>
-                <li>Select Type of Corporate/Institution: <strong>Educational Institutions</strong></li>
-                <li>Select Educational Institution Name: <strong>National Institute of Technology Tiruchirappalli</strong></li>
-                <li>Select Payment Category: <strong>Other Fees</strong></li>
-                <li>Enter the amount: <strong>₹500</strong></li>
-                <li>Fill in your details and complete the payment</li>
-                <li>Download/Save the payment receipt as PDF or image</li>
-              </ol>
-
-              <button
-                type="button"
-                onClick={() => window.open('https://www.onlinesbi.sbi/sbicollect/', '_blank')}
-                className="btn btn-primary"
-                style={{ marginTop: '15px' }}
-              >
-                Go to SBI Collect Website
-              </button>
-            </div>
-
-            <div className="form-grid full">
-              <div className="form-group">
-                <label htmlFor="payment">
-                  Fee Payment Receipt - ₹500 {isPaymentMandatory && <span className="required">*</span>}
-                </label>
-                {!files.payment && (
-                  <input
-                    type="file"
-                    id="payment"
-                    name="payment"
-                    onChange={handleFileChange}
-                    accept=".pdf,image/*"
-                    required={isPaymentMandatory}
-                  />
-                )}
-                {files.payment && (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <div className="file-check" style={{ flex: 1 }}>
-                      ✓ {files.payment.name} ({formatFileSize(files.payment.size)})
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => removeFile('payment')}
-                      className="btn btn-secondary"
-                      style={{ padding: '8px 16px', fontSize: '13px' }}
-                    >
-                      Remove
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-
             <div className="button-group" style={{ marginTop: '35px' }}>
               <button type="button" onClick={() => setStep(1)} className="btn btn-secondary">← Back</button>
               <button type="submit" className="btn btn-primary">Preview Application →</button>
@@ -821,8 +691,6 @@ export default function FacultyStaffFlow() {
                <div className="preview-item"><strong>Mobile:</strong> {formData.phone}</div>
                <div className="preview-item full-width"><strong>Address:</strong> {formData.address}</div>
                <div className="preview-item"><strong>Photo:</strong> {files.photo ? files.photo.name : 'Not Uploaded'}</div>
-               <div className="preview-item"><strong>FIR:</strong> {files.fir ? files.fir.name : 'Not Uploaded'}</div>
-               <div className="preview-item"><strong>Payment:</strong> {files.payment ? files.payment.name : 'Not Uploaded'}</div>
             </div>
           </div>
           
