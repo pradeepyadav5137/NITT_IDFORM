@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import StepIndicator from '../components/StepIndicator'
 import './StudentFlow.css'
 
 // 1. Define Default State cleanly
@@ -28,6 +29,8 @@ const INITIAL_STATE = {
   firDate: '',
   policeStation: ''
 };
+
+const STUDENT_STEPS = ['Verify Email', 'Student Form', 'Upload Documents', 'Preview & Submit'];
 
 export default function StudentForm() {
   const navigate = useNavigate()
@@ -158,6 +161,13 @@ export default function StudentForm() {
   return (
     <div className="form-container">
       
+      {/* Add StepIndicator */}
+      <StepIndicator
+        current={2}
+        total={STUDENT_STEPS.length}
+        labels={STUDENT_STEPS}
+      />
+
       {/* --- TOAST COMPONENT (Using CSS classes) --- */}
       {toast && (
         <div className={`toast-notification ${toast.type === 'error' ? 'toast-error' : 'toast-success'}`}>
