@@ -88,7 +88,10 @@ export default function StudentForm() {
 
   const handleChange = (e) => {
     const { name, value } = e.target
-    const updatedData = { ...formData, [name]: value };
+    // Prevent leading spaces
+    const cleanValue = (typeof value === 'string') ? value.replace(/^\s+/, '') : value;
+
+    const updatedData = { ...formData, [name]: cleanValue };
     
     setFormData(updatedData)
     localStorage.setItem('studentFormData', JSON.stringify(updatedData));
@@ -122,6 +125,8 @@ export default function StudentForm() {
     
     if (formData.issuedBooks === '' || formData.issuedBooks === null) {
       newErrors.issuedBooks = "Issued Books count is required (enter 0 if none)";
+    } else if (parseInt(formData.issuedBooks) > 2) {
+      newErrors.issuedBooks = "Cannot issue more than 2 books";
     }
 
     if (!formData.requestCategory) newErrors.requestCategory = "Request Category is required";
@@ -201,12 +206,36 @@ export default function StudentForm() {
 
             <div className="form-group">
               <label htmlFor="gender">Gender <span className="required">*</span></label>
-              <select id="gender" name="gender" value={formData.gender} onChange={handleChange} required>
+              <select
+                id="gender"
+                name="gender"
+                value={['Male', 'Female', ''].includes(formData.gender) ? formData.gender : 'Other'}
+                onChange={(e) => {
+                  if (e.target.value === 'Other') {
+                    setFormData({ ...formData, gender: 'Other' });
+                  } else {
+                    handleChange(e);
+                  }
+                }}
+                required
+              >
                 <option value="">Select Gender</option>
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
                 <option value="Other">Other</option>
               </select>
+              {/* Show input if Other is selected */}
+              {(!['Male', 'Female', ''].includes(formData.gender)) && (
+                <input
+                  type="text"
+                  name="gender"
+                  value={formData.gender === 'Other' ? '' : formData.gender}
+                  onChange={handleChange}
+                  placeholder="Please specify gender"
+                  style={{ marginTop: '10px' }}
+                  required
+                />
+              )}
               {errors.gender && <small style={{ color: '#e53e3e' }}>{errors.gender}</small>}
             </div>
 

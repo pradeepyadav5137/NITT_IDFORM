@@ -214,18 +214,28 @@ async function saveFile(fieldName, file, applicationId) {
   }
 
   // 2. Fallback to Local Storage
-  if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
-  
-  const dir = path.join(uploadsDir, applicationId);
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-  
-  const filename = `${fieldName}-${Date.now()}${ext}`;
-  const filepath = path.join(dir, filename);
-  
-  fs.writeFileSync(filepath, file.buffer);
-  
-  // Return relative path for local storage
-  return `${applicationId}/${filename}`;
+  try {
+    if (!fs.existsSync(uploadsDir)) {
+      fs.mkdirSync(uploadsDir, { recursive: true });
+    }
+
+    const dir = path.join(uploadsDir, applicationId);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+
+    const filename = `${fieldName}-${Date.now()}${ext}`;
+    const filepath = path.join(dir, filename);
+
+    fs.writeFileSync(filepath, file.buffer);
+    console.log(`Saved file locally: ${filepath}`);
+
+    // Return relative path for local storage
+    return `${applicationId}/${filename}`;
+  } catch (err) {
+    console.error(`Failed to save file locally: ${err.message}`);
+    throw new Error('File upload failed');
+  }
 }
 
 // Submit application (with optional photo, fir, payment, applicationPdf files)

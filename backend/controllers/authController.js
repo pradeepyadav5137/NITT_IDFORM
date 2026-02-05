@@ -29,6 +29,9 @@ export const sendOtp = async (req, res) => {
       if (!cleanRoll) {
         return res.status(400).json({ message: 'Valid roll number is required' });
       }
+      if (cleanRoll.length < 9) {
+        return res.status(400).json({ message: 'Roll number must be at least 9 digits' });
+      }
       targetEmail = `${cleanRoll}@nitt.edu`;
       rollNoLock = cleanRoll;
     } else if (userType === 'faculty' || userType === 'staff') {
@@ -50,12 +53,17 @@ export const sendOtp = async (req, res) => {
     await Otp.deleteMany({ email: targetEmail });
     await Otp.create({ email: targetEmail, otp, expiresAt });
 
-    await sendMail(
-      targetEmail,
-      'NITT ID Card Re-issue – OTP Verification',
-      `Your OTP is: ${otp}. It is valid for ${OTP_EXPIRY_MINUTES} minutes. Do not share this with anyone.`,
-      `<p>Your OTP is: <strong>${otp}</strong>.</p><p>Valid for ${OTP_EXPIRY_MINUTES} minutes. Do not share with anyone.</p>`
-    );
+    try {
+      await sendMail(
+        targetEmail,
+        'NITT ID Card Re-issue – OTP Verification',
+        `Your OTP is: ${otp}. It is valid for ${OTP_EXPIRY_MINUTES} minutes. Do not share this with anyone.`,
+        `<p>Your OTP is: <strong>${otp}</strong>.</p><p>Valid for ${OTP_EXPIRY_MINUTES} minutes. Do not share with anyone.</p>`
+      );
+    } catch (mailError) {
+      console.error('Nodemailer error:', mailError);
+      return res.status(400).json({ message: 'Email does not exist or delivery failed' });
+    }
 
     res.json({
       success: true,
