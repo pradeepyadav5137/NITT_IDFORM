@@ -16,7 +16,44 @@
 .student-flow .payment-instructions li {
   margin-bottom: 6px;
 } */
+/* Toast Notification Styles */
+.toast-notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 12px 24px;
+  border-radius: 8px;
+  color: white;
+  font-weight: 500;
+  font-size: 14px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: slideIn 0.3s ease-out forwards;
+}
 
+.toast-error {
+  background-color: #e53e3e; /* Red */
+  border-left: 5px solid #9b2c2c;
+}
+
+.toast-success {
+  background-color: #38a169; /* Green */
+  border-left: 5px solid #276749;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
 
 /* ===== Student Flow Styles - NITT Theme ===== */
 
